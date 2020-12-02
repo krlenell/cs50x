@@ -2,73 +2,74 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <math.h>
 
-float get_average_letters (int letters, int words);
+float get_average_letters(int letters, int words);
 
-float get_average_sentences (int sentences, int words);
+float get_average_sentences(int sentences, int words);
 
 
-
-//index = 0.0588 * L - 0.296 * S - 15.8
-
-//L = average letter per 100 words
-
-//S = average number of sentences per 100 words
-
-int main (void)
+int main(void)
 {
+    //assumes there is 1 word in each passage
     int words = 1;
     int sentences = 0;
     int letters = 0;
 
     string text = get_string("Text: ");
     int length = strlen(text);
-
-    for(int i = 0; i < length; i++)
+    for (int i = 0; i < length; i++)
     {
-        printf("%c", text[i]);
-        switch(text[i])
+        //determines what to do for each given character
+        switch (text[i])
         {
-
             case ' ':
                 words++;
-                printf("new word\n");
                 break;
 
             case '.':
             case '!':
             case '?':
                 sentences++;
-                printf("new sentence\n");
+                break;
+
             default:
-                if(isalpha(text[i]))
+                if (isalpha(text[i]))
                 {
-                letters++;
+                    letters++;
                 }
         }
     }
-    printf("words: %i\n", words);
-    printf("sentences: %i\n", sentences);
-    printf("letters: %i\n", letters);
+    float average_letters = get_average_letters(letters, words);
+    float average_sentences = get_average_sentences(sentences, words);
+    //calculates grade level by Coleman-Liau index
+    float grade_level = 0.0588 * average_letters - 0.296 * average_sentences - 15.8;
+    int rounded_level = (int) round(grade_level);
+    //decides what to print for each rounded level result
+    if (rounded_level < 1)
+    {
+        printf("Before Grade 1\n");
+    }
+    else if (rounded_level >= 16)
+    {
+        printf("Grade 16+\n");
+    }
+    else
+    {
+        printf("Grade %i\n", rounded_level);
+    }
 }
 
-float get_average_letters (int letters, int words)
+float get_average_letters(int letters, int words)
 {
-    //gets the average number of letters per 100 words
-    return 1;
+    //gets average letters per 100 words
+    float result = ((float) letters / words) * 100;
+    return result;
 }
 
-float get_average_sentences (int sentences, int words)
+float get_average_sentences(int sentences, int words)
 {
     //gets average sentences per 100 words
-    return 1;
+    float result = ((float) sentences / words) * 100;
+    return result;
 }
-
-
-
-/*
-When he was nearly thirteen, my brother Jem got his arm badly broken at the elbow. When it healed, and Jem's fears of never being able to play football were assuaged, he was seldom self-conscious about his injury. His left arm was somewhat shorter than his right; when he stood or walked, the back of his hand was at right angles to his body, his thumb parallel to his thigh.
-295 letter(s)
-70 word(s)
-3 sentence(s)
-*/
